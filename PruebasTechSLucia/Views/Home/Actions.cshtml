@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "Actions";
+}
+<h1>@ViewData["Title"]</h1>
+
+<div class="mt-4">
+	<button id="subcription1" type="button" class="btn btn-primary" onclick="habilitarSubcriptionToken()">Request a subscription token</button>
+	<button id="subcription2" type="button" class="btn btn-secondary" onclick="habilitarCrearToken()">Create a subscription</button>
+	<button id="Autorizacion1" type="button" class="btn btn-secondary" onclick="habilitarAutorizacionPagos()">Authorize payments</button>
+	<button id="Payment1" type="button" class="btn btn-secondary" onclick="habilitarcrearPagos()">Create payment</button>
+	<button id="subcription3" type="button" class="btn btn-secondary" onclick="habilitarObtenerSubscripcion()">Get subscription</button>
+</div>
+<div>
+	<div id="subscriptionToken" class="container mt-4 mb-4">
+		<div class="row">
+			<div id="requestSubscriptionToken" class="col-md-6" >
+				<form id="ObtenerTokenSubcription" method="post">
+				  <div class="form-group">
+					<label for="nombreST">Nombre Completo</label>
+					<input type="text" class="form-control" id="nombreST" placeholder="Nombre" required value="Lucia Lopez">
+				  </div>
+				  <div class="form-group">
+					<label for="tarjetaST">Número de la tarjeta</label>
+					<input type="number" class="form-control" id="tarjetaST" placeholder="Número de la tarjeta" required value="5451951574925480" >
+				  </div>
+				   <div class="form-group">
+					<label for="ccvST">CVC</label>
+					<input type="number" class="form-control" id="ccvST" placeholder="CCV" required- value="123" >
+				  </div>
+				  <div class="form-group">
+					<label for="expiryMonthST">Mes de expiración</label>
+					<input type="number" class="form-control" id="expiryMonthST" placeholder="Mes de expiración" required value="12" >
+				  </div>
+				  <div class="form-group">
+					<label for="expiryYearST">Año de expiración</label>
+					<input type="number" class="form-control" id="expiryYearST" placeholder="Año de expiración" required value="25" >
+				  </div>
+				  <br/>
+				  <button type="submit"  class="btn btn-primary">Generar Token de Subcripción</button>
+				</form>
+			</div>
+		</div>			
+	</div>
+	<div id="createToken" class="container d-none">		
+		<div class="row">
+				<form class="row g-3" id="fcreateToken">
+				  <div class="col-md-3">
+					<input type="text" class="form-control" placeholder="Token" aria-label="Token" id="Token" value="gV3ox6100000sAxClU033646vnnJsT83" required/>
+				  </div>
+				  <div class="col-md-3">
+					<input type="text" class="form-control" placeholder="Plan Name" aria-label="planName" id="planName" value="Premium" required/>
+				  </div>
+				  <div class="col-md-3">
+					<input type="text" class="form-control" placeholder="Periodicity" aria-label="periodicity" id="periodicity" value="monthly" required/>
+				  </div>
+				  <div class="col-md-3">
+					<select class="form-control" id="documentType">
+					  <option value="CC" selected>CC</option>
+					</select>
+					</div>
+				   <div class="col-md-3">
+					<input type="number" class="form-control" placeholder="Document Number" aria-label="documentNumber" id="documentNumber" value="1009283738" required />
+				  </div> 
+				  <div class="col-md-3">
+					<input type="email" class="form-control" placeholder="Email" aria-label="email" id="email" value="test@test.com" required/>
+				  </div> 
+				  <div class="col-md-3">
+					<input type="text" class="form-control" placeholder="first Name" aria-label="firstName" id="firstName" value="Diego" required/>
+				  </div> 
+				  <div class="col-md-3">
+					<input type="text" class="form-control" placeholder="last Name" aria-label="lastName" id="lastName" value="Cadena" required/>
+				  </div> 
+				  <div class="col-md-3">
+					<input type="tel" class="form-control" placeholder="phoneNumber" aria-label="phone Number" id="phoneNumber" value="3988734644" required>>
+				  </div> 
+				  <div class="col-md-3">
+					 <button type="button" onclick="createSubscription()" class="btn btn-primary">Crear Subcripción</button>
+				  </div>
+				</form>
+		</div>				
+	</div>
+	<div id="AutorizationPayment" class="container d-none">		
+		<div class="row">
+				<form class="row g-3" id="fAutorizationPayment" method="post">
+				  <div class="col-md-3">
+					<input type="text" class="form-control" placeholder="Token" aria-label="Token" id="TokenAP" value="QZPnSP1000000b3MG3062555GhIrcYt5" required/>
+				  </div>
+				  <div class="col-md-3">
+					 <button type="button" id="bAutorizationPayment" onclick="preAutorizationPayment()" class="btn btn-primary">Crear Subcripción</button>
+				  </div>
+				</form>
+		</div>				
+	</div>
+	<div id="createPayment" class="container d-none">		
+		<div class="row">
+				<form id="my-form" class="row g-3" action="/Home/ConfirmPayment" method="post">
+					<input type="hidden" name="cart_id" value="123">
+				</form>
+		</div>				
+	</div>
+	<div id="getsubscription" class="container d-none">		
+		<div class="row">
+				<form id="fGetSubscription" class="row g-3" method="post">
+					<div class="col-md-3">
+					<input type="text" class="form-control" placeholder="Token" aria-label="Token" id="subscription" value="QZPnSP1000000b3MG3062555GhIrcYt5" required/>
+				  </div>
+				  <div class="col-md-3">
+					 <button type="button" id="bGetSubscription" onclick="GetSubscription()" class="btn btn-primary">Obtener Subcripción</button>
+				  </div>
+				</form>
+		</div>				
+	</div>
+
+
+	
+</div>
+
