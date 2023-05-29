@@ -19,18 +19,21 @@ $(document).ready(function () {
         preAutorizationPayment();
         
     });
+
+   
+
+   
 });
 
 var kushki = new Kushki({
-    merchantId: '827e213983ea4cbb968b9a0493c0e5ca',
-    inTestEnvironment: true,
-    regional: false
+    merchantId: '5ae519fb18c14f4f88e4defddf7cf699',
+    inTestEnvironment: true
 });
 
 var kushki2 = new KushkiCheckout({
     kformId: "8TyREgpdV",
     form: "my-form",
-    publicMerchantId: "827e213983ea4cbb968b9a0493c0e5ca",// Reemplaza esto por tucredencial pública
+    publicMerchantId: "5ae519fb18c14f4f88e4defddf7cf699",// Reemplaza esto por tucredencial pública
     inTestEnvironment: true,
     amount: {
         subtotalIva: 0,
@@ -42,19 +45,46 @@ var kushki2 = new KushkiCheckout({
 var callback = function (response) {
     limpiarMensajes();
     if (!response.code) {
-        $("#error").addClass("d-none");
-        $("#succes").removeClass("d-none");
-        $("#succes").text(response.message);
+        $("#success").addClass("d-none");
+        $("#error").removeClass("d-none");
+        $("#error").text(response.message);
     } else {
-        $("#succes").addClass("d-none");
+        $("#error").addClass("d-none");
+        $("#success").removeClass("d-none");
+        $("#success").text(response.message);
+        
+    }
+}
+
+var callbackRequestSubscriptionToken = function (response) {
+    limpiarMensajes();
+    if (response.token) {
+        $("#error").addClass("d-none");
+        $("#success").removeClass("d-none");
+        $("#success").text("Token generado: " + response.token); 
+        localStorage.setItem('token', response.token);
+    } else {        
+        $("#success").addClass("d-none");
         $("#error").removeClass("d-none");
         $("#error").text(response.message);
     }
+    closeSpinner();
+
 }
 
 // Also you can set the function directly
 
+
+function loadSpinner() {
+    $('#dvCargando').css('visibility', 'visible');
+}
+
+function closeSpinner() {
+    $('#dvCargando').css('visibility', 'hidden');
+}
+
 function obtenerToken() {
+    loadSpinner();
     kushki.requestSubscriptionToken({
         card: {
             name: $("#nombreST").val(),
@@ -63,8 +93,181 @@ function obtenerToken() {
             expiryMonth: $("#expiryMonthST").val(),
             expiryYear: $("#expiryYearST").val()
         },
-        currency: "PEN"
-    }, callback);
+        currency: "USD"
+    }, callbackRequestSubscriptionToken);
+}
+
+function createSubscription() {
+    loadSpinner();
+    var token;
+    var form = $('#fcreateToken')[0];
+    var formData = new FormData(form);      
+
+    $.ajax({
+        type: "POST",
+        url: getUrlCreateSubcription(),
+        dataType: "json",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (result) {
+            if (result.subscriptionId) {
+                console.log("OK");
+                localStorage.setItem('subscriptionId', result.subscriptionId);
+                $("#error").addClass("d-none");
+                $("#success").removeClass("d-none");
+                $("#success").text("subscriptionId : " + result.subscriptionId);
+                closeSpinner();
+            } else {
+                mostrarMensaje(result);
+            }
+            
+        },
+        error: function (error) {
+            console.log(error);
+            closeSpinner();
+            mostrarMensaje(error);
+        }
+    }).done((res) => {
+        console.log(res)
+    });
+}
+
+function preAutorizationPayment() {
+    loadSpinner();
+    var form = $('#fAutorizationPayment')[0];
+    var formData = new FormData(form);
+
+    $.ajax({
+        type: "POST",
+        url: getUrlCreateAutorization(),
+        dataType: "json",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (result) {
+            if (result.ticketNumber) {
+                console.log("OK");
+                localStorage.setItem('ticketNumber', result.ticketNumber);
+                $("#error").addClass("d-none");
+                $("#success").removeClass("d-none");
+                $("#success").text("ticketNumber : " + result.ticketNumber);
+                closeSpinner();
+            } else {
+                mostrarMensaje(result);
+            }
+        },
+        error: function (error) {
+            console.log(error);
+            closeSpinner();
+            mostrarMensaje(error);
+        }
+    }).done((res) => {
+        console.log(res)
+    }); 
+}
+
+function getAutorizationPayment() {
+    loadSpinner();
+    var form = $('#fGetAutorizationPayment')[0];
+    var formData = new FormData(form);
+
+    $.ajax({
+        type: "POST",
+        url: getUrlGetCreateAutorization(),
+        dataType: "json",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (result) {
+            if (result.transactionReference) {
+                console.log("OK");
+                localStorage.setItem('transactionReference', result.transactionReference);
+                $("#error").addClass("d-none");
+                $("#success").removeClass("d-none");
+                $("#success").text("transactionReference : " + result.transactionReference);
+                closeSpinner();
+            } else {
+                mostrarMensaje(result);
+            }
+        },
+        error: function (error) {
+            console.log(error);
+            closeSpinner();
+            mostrarMensaje(error);
+        }
+    }).done((res) => {
+        console.log(res)
+    });
+}
+
+function GetSubscription() {
+    loadSpinner();
+    var form = $('#fGetSubscription')[0];
+    var formData = new FormData(form);
+
+        $.ajax({
+            type: "POST",
+            url: getUrlGetSubscription(),
+            dataType: "json",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result.subscriptionId) {
+                    console.log("OK");
+                    //localStorage.setItem('subscriptionId2', result.subscriptionId);
+                    $("#error").addClass("d-none");
+                    $("#success").removeClass("d-none");
+                    $("#success").text("Consulta exitosa");
+                    closeSpinner();
+                    alert(JSON.stringify(result));
+                    
+
+                } else {
+                    mostrarMensaje(result);
+                }
+            },
+            error: function (error) {
+                console.log(error);
+                closeSpinner();
+                mostrarMensaje(error);
+            }
+        });  
+
+}
+
+function VoidTransaction() {
+    loadSpinner();
+    var form = $('#fVoidTransaction')[0];
+    var formData = new FormData(form);
+
+    $.ajax({
+        type: "POST",
+        url: getUrlVoidTransaction(),
+        dataType: "json",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (result) {
+            var objt = JSON.parse(result);
+            if (objt.ticketNumber) {
+                console.log("OK");
+                $("#error").addClass("d-none");
+                $("#success").removeClass("d-none");
+                $("#success").text("Eliminacion exitosa");
+                closeSpinner();                
+            } else {
+                mostrarMensaje2(result);               
+            }
+        },
+        error: function (error) {
+            console.log(error);
+            closeSpinner();
+            mostrarMensaje(error);
+        }
+    });  
+
 }
 
 function habilitarSubcriptionToken() {
@@ -74,7 +277,8 @@ function habilitarSubcriptionToken() {
         ocutarAutorizacionPagos();
         mostrarsubscriptionToken();
         ocultarObtenerSubscripcion();
-       
+        ocultarVoidTransaccion();
+        ocultarcrearPagos();
     }
 }
 
@@ -98,7 +302,15 @@ function habilitarCrearToken() {
         ocutarAutorizacionPagos();
         ocultarcrearPagos();
         ocultarObtenerSubscripcion();
+        ocultarVoidTransaccion();
     }
+
+    if (localStorage.getItem('token') !== null) {
+        $("#Token").val(localStorage.getItem('token'));
+    } else {
+        $("#Token").val("");
+    }
+    
 }
 
 function mostrarcreateToken() {
@@ -120,9 +332,33 @@ function habilitarAutorizacionPagos() {
         ocultarcreateToken();
         ocultarsubscriptionToken();
         ocultarcrearPagos();
-        ocultarObtenerSubscripcion();
-        
+        ocultarObtenerSubscripcion();    
+        ocultarVoidTransaccion();
     }
+    if (localStorage.getItem('token') !== null) {
+        $("#tokenAP").val(localStorage.getItem('token'));
+    } else {
+        $("#tokenAP").val("");
+    }
+}
+
+function habilitarGetAutorizacionPagos() {
+    limpiarMensajes();
+    if ($("#GetAutorizationPayment").hasClass("d-none")) {
+        mostrarGetAutorizacionPagos();
+        ocutarAutorizacionPagos();
+        ocultarcreateToken();
+        ocultarsubscriptionToken();
+        ocultarcrearPagos();
+        ocultarObtenerSubscripcion();
+        ocultarVoidTransaccion();
+    }
+}
+
+function mostrarGetAutorizacionPagos() {
+    $("#GetAutorizationPayment").removeClass("d-none");
+    $("#Autorizacion2").removeClass("btn-secondary");
+    $("#Autorizacion2").addClass("btn-primary");
 }
 
 function mostrarAutorizacionPagos() {
@@ -137,66 +373,23 @@ function ocutarAutorizacionPagos() {
     $("#Autorizacion1").addClass("btn-secondary");
 }
 
+function ocultarGetAutorizacionPagos() {
+    $("#GetAutorizationPayment").addClass("d-none");
+    $("#Autorizacion2").removeClass("btn-primary");
+    $("#Autorizacion2").addClass("btn-secondary");
+}
 
 function limpiarMensajes() {
     $("#ObtenerTokenSubcription")[0].reset();
     $("#fcreateToken")[0].reset();
     $("#fAutorizationPayment")[0].reset();
+    $("#fGetAutorizationPayment")[0].reset();
+    $("#fGetSubscription")[0].reset();
+    $("#fVoidTransaction")[0].reset();
     $("#error").addClass("d-none");
-    $("#succes").addClass("d-none");
+    $("#success").addClass("d-none");
+    closeSpinner();
 }
-
-function createSubscription() {
-    loadSpinner();
-    $.ajax({
-        type: "POST",
-        url: '/Home/crearSubcripcion',
-        dataType: "json",
-        success: function (result) {
-            console.log("OK");
-            console.log(result);
-            closeSpinner();
-            mostrarMensaje(result);
-        },
-        error: function (error) {
-            console.log(error);
-            closeSpinner();
-            mostrarMensaje(error);
-        }
-    });   
-}
-
-function preAutorizationPayment() {
-    loadSpinner();
-    var data = [];
- 
-    if ($("#TokenAP").val() != null && $("#TokenAP").val() != "") {
-        var t = $("#TokenAP").val().toString();
-        data[0] = t;
-        $.ajax({
-            type: "POST",
-            url: '/Home/preAutorizarPago',
-            dataType: "json",
-            data: { d: data },
-            success: function (result) {
-                console.log("OK");
-                console.log(result);
-                closeSpinner();
-                mostrarMensaje(result);
-
-            },
-            error: function (error) {
-                console.log(error);
-                mostrarMensaje(error);
-                closeSpinner();
-            }
-        });
-    } else {
-        $("#TokenAP").addClass("alert");
-    }
-    
-}
-
 
 function habilitarcrearPagos() {
     limpiarMensajes();
@@ -206,6 +399,7 @@ function habilitarcrearPagos() {
         ocultarcreateToken();
         ocultarsubscriptionToken();
         ocultarObtenerSubscripcion();
+        ocultarVoidTransaccion();
     }
 }
 
@@ -219,44 +413,40 @@ function ocultarcrearPagos() {
     $("#Payment1").addClass("btn-secondary");
     $("#Payment1").removeClass("btn-primary");
 }
-
-function GetSubscription() {
-    loadSpinner();
-    if ($("#subscription").val() != null && $("#subscription").val() != "") {
-        var t = $("#subscription").val().toString();
-        var datos = t; 
-        $.ajax({
-            type: "POST",
-            url: '/Home/GetSubscription',
-            contentType: "text/plain",
-            data: datos,
-            success: function (result) {
-                console.log("OK");
-                console.log(result);
-                closeSpinner();
-                mostrarMensaje(result);
-
-            },
-            error: function (error) {
-                console.log(error);
-                mostrarMensaje(error);
-                closeSpinner();
-            }
-        });
-    } else {
-        $("#subscription").addClass("alert");
-    }
-
+function mostrarVoidTransaccion() {
+    $("#voidTransaction").removeClass("d-none");
+    $("#transaction").removeClass("btn-secondary");
+    $("#transaction").addClass("btn-primary");
+}
+function ocultarVoidTransaccion() {
+    $("#voidTransaction").addClass("d-none");
+    $("#transaction").addClass("btn-secondary");
+    $("#transaction").removeClass("btn-primary");
 }
 
 function habilitarObtenerSubscripcion() {
     limpiarMensajes();
-    if ($("#getsubscription").hasClass("d-none")) {
+    if ($("#getsubscription").hasClass("d-none")) {        
         mostrarObtenerSubscripcion();
         ocultarcrearPagos();
         ocutarAutorizacionPagos();
         ocultarcreateToken();
         ocultarsubscriptionToken();
+        ocultarGetAutorizacionPagos();
+        ocultarVoidTransaccion();  
+    }
+}
+
+function habilitarvoidTransaccion() {
+    limpiarMensajes();
+    if ($("#voidTransaction").hasClass("d-none")) {
+        mostrarVoidTransaccion();        
+        ocultarcrearPagos();
+        ocutarAutorizacionPagos();
+        ocultarcreateToken();
+        ocultarsubscriptionToken();
+        ocultarGetAutorizacionPagos();
+        ocultarObtenerSubscripcion();
     }
 }
 
@@ -283,6 +473,20 @@ function mostrarMensaje(response) {
         $("#succes").addClass("d-none");
         $("#error").removeClass("d-none");
         $("#error").text(response.message);
+    }
+}
+
+function mostrarMensaje2(response) {
+    var objt = JSON.parse(response);
+    limpiarMensajes();
+    if (!objt.code) {
+        $("#error").addClass("d-none");
+        $("#succes").removeClass("d-none");
+        $("#succes").text(objt.message);
+    } else {
+        $("#succes").addClass("d-none");
+        $("#error").removeClass("d-none");
+        $("#error").text(objt.message);
     }
 }
 

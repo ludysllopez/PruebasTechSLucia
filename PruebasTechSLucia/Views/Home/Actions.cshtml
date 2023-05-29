@@ -7,8 +7,11 @@
 	<button id="subcription1" type="button" class="btn btn-primary" onclick="habilitarSubcriptionToken()">Request a subscription token</button>
 	<button id="subcription2" type="button" class="btn btn-secondary" onclick="habilitarCrearToken()">Create a subscription</button>
 	<button id="Autorizacion1" type="button" class="btn btn-secondary" onclick="habilitarAutorizacionPagos()">Authorize payments</button>
-	<button id="Payment1" type="button" class="btn btn-secondary" onclick="habilitarcrearPagos()">Create payment</button>
+	<button id="Autorizacion2" type="button" class="btn btn-secondary" onclick="habilitarGetAutorizacionPagos()">Get Authorize payments</button>
 	<button id="subcription3" type="button" class="btn btn-secondary" onclick="habilitarObtenerSubscripcion()">Get subscription</button>
+	<button id="transaction" type="button" class="btn btn-secondary" onclick="habilitarvoidTransaccion()">Void Transaction</button>
+
+	@*<button id="Payment1" type="button" class="btn btn-secondary" onclick="habilitarcrearPagos()">Create payment</button>*@
 </div>
 <div>
 	<div id="subscriptionToken" class="container mt-4 mb-4">
@@ -45,34 +48,34 @@
 		<div class="row">
 				<form class="row g-3" id="fcreateToken">
 				  <div class="col-md-3">
-					<input type="text" class="form-control" placeholder="Token" aria-label="Token" id="Token" value="gV3ox6100000sAxClU033646vnnJsT83" required/>
+					<input type="text" class="form-control" placeholder="Token" aria-label="Token" id="Token" name="token" value="gV3ox6100000sAxClU033646vnnJsT83" required />
 				  </div>
 				  <div class="col-md-3">
-					<input type="text" class="form-control" placeholder="Plan Name" aria-label="planName" id="planName" value="Premium" required/>
+					<input type="text" class="form-control" placeholder="Plan Name" aria-label="planName" id="planName" name="planName" value="Premium" required />
 				  </div>
 				  <div class="col-md-3">
-					<input type="text" class="form-control" placeholder="Periodicity" aria-label="periodicity" id="periodicity" value="monthly" required/>
+					<input type="text" class="form-control" placeholder="Periodicity" aria-label="periodicity" id="periodicity" name="periodicity" value="monthly" required />
 				  </div>
 				  <div class="col-md-3">
-					<select class="form-control" id="documentType">
+					<select class="form-control" id="documentType" name="documentType">
 					  <option value="CC" selected>CC</option>
 					</select>
-					</div>
-				   <div class="col-md-3">
-					<input type="number" class="form-control" placeholder="Document Number" aria-label="documentNumber" id="documentNumber" value="1009283738" required />
+				</div>
+					<div class="col-md-3">
+					<input type="number" class="form-control" placeholder="Document Number" aria-label="documentNumber" id="documentNumber" name="documentNumber" value="1009283738" required />
 				  </div> 
 				  <div class="col-md-3">
-					<input type="email" class="form-control" placeholder="Email" aria-label="email" id="email" value="test@test.com" required/>
+					<input type="email" class="form-control" placeholder="Email" aria-label="email" id="email" name="email" value="test@test.com" required />
 				  </div> 
 				  <div class="col-md-3">
-					<input type="text" class="form-control" placeholder="first Name" aria-label="firstName" id="firstName" value="Diego" required/>
+					<input type="text" class="form-control" placeholder="first Name" aria-label="firstName" id="firstName" name="firstName" value="Diego" required />
 				  </div> 
 				  <div class="col-md-3">
-					<input type="text" class="form-control" placeholder="last Name" aria-label="lastName" id="lastName" value="Cadena" required/>
+					<input type="text" class="form-control" placeholder="last Name" aria-label="lastName" id="lastName" name="lastName" value="Cadena" required />
 				  </div> 
 				  <div class="col-md-3">
-					<input type="tel" class="form-control" placeholder="phoneNumber" aria-label="phone Number" id="phoneNumber" value="3988734644" required>>
-				  </div> 
+					<input type="tel" class="form-control" placeholder="phoneNumber" aria-label="phone Number" id="phoneNumber" name="phoneNumber" value="3988734644" required>>
+				  </div> 			   
 				  <div class="col-md-3">
 					 <button type="button" onclick="createSubscription()" class="btn btn-primary">Crear Subcripción</button>
 				  </div>
@@ -81,15 +84,112 @@
 	</div>
 	<div id="AutorizationPayment" class="container d-none">		
 		<div class="row">
-				<form class="row g-3" id="fAutorizationPayment" method="post">
-				  <div class="col-md-3">
-					<input type="text" class="form-control" placeholder="Token" aria-label="Token" id="TokenAP" value="QZPnSP1000000b3MG3062555GhIrcYt5" required/>
-				  </div>
-				  <div class="col-md-3">
+			<form class="row g-3" id="fAutorizationPayment" method="post">
+				<div class="form-group">
+					<label for="tokenAP">Token</label>
+					<input type="text" class="form-control" placeholder="Token" aria-label="Token" id="tokenAP" name="token" required />
+				</div>
+				<div class="form-group">
+					<label for="url">URL Site</label>
+					<input type="text" class="form-control" placeholder="URL Site" aria-label="url" id="siteDomain" value="example.com" name="siteDomain" required />
+				</div>
+				<div class="container">
+					<div class="row">
+						<div class="col-sm-6">
+							<h2>Details shipping </h2>
+							<div class="form-group">
+								<label for="name1">Name</label>
+								<input type="text" class="form-control" placeholder="Name" aria-label="Name" id="name1" value="John Doe" name="name" required />
+							</div>
+							<div class="form-group">
+								<label for="phone1">Phone</label>
+								<input type="tel" class="form-control" aria-label="phone1" id="phone1" name="phone" value="+529123456789" required />
+							</div>
+							<div class="form-group">
+								<label for="address1">Address</label>
+								<input type="text" class="form-control" aria-label="address1" id="address1" name="address1" value="Centro 123" required />
+							</div>
+							<div class="form-group">
+								<label for="city1">City</label>
+								<input type="text" class="form-control" aria-label="city1" id="city1" name="city" value="Monterrey" required />
+							</div>
+							<div class="form-group">
+								<label for="region1">Region</label>
+								<input type="text" class="form-control" aria-label="region1" id="region1" value="Nuevo Leon" name="region" required />
+							</div>
+							<div class="form-group">
+								<label for="country1">Country</label>
+								<input type="text" class="form-control" aria-label="country1" id="country1" value="Mexico" name="country" required />
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<h2>Details billing</h2>
+							<div class="form-group">
+								<label for="name2">Name</label>
+								<input type="text" class="form-control" placeholder="Name" aria-label="Name" id="name2" value="John Doe" name="name2" required />
+							</div>
+							<div class="form-group">
+								<label for="phone2">Phone</label>
+								<input type="tel" class="form-control" aria-label="phone1" id="phone2" value="+529123456789" name="phone2" required />
+							</div>
+							<div class="form-group">
+								<label for="address2">Address</label>
+								<input type="text" class="form-control" aria-label="address1" id="address2" value="Centro 123" name="address2" required />
+							</div>
+							<div class="form-group">
+								<label for="city2">City</label>
+								<input type="text" class="form-control" aria-label="city1" id="city2" value="Monterrey" name="city2" required />
+							</div>
+							<div class="form-group">
+								<label for="region2">Region</label>
+								<input type="text" class="form-control" aria-label="region1" id="region2" value="Nuevo Leon" name="region2" required />
+							</div>
+							<div class="form-group">
+								<label for="country2">Country</label>
+								<input type="text" class="form-control" aria-label="country1" id="country2" value="Mexico" name="country2" required />
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				<div class="col-md-3">
 					 <button type="button" id="bAutorizationPayment" onclick="preAutorizationPayment()" class="btn btn-primary">Crear Subcripción</button>
-				  </div>
-				</form>
+				</div>
+			</form>
 		</div>				
+	</div>
+	<div id="GetAutorizationPayment" class="container d-none">
+		<div class="row">
+			<form class="row g-3" id="fGetAutorizationPayment" method="post">
+				<div class="form-group">
+					<label for="ticketNumber">Ticket Number</label>
+					<input type="text" class="form-control" placeholder="ticketNumber" aria-label="ticketNumber" id="ticketNumber" name="ticketNumber" required />
+				</div>
+				<div class="form-group">
+					<label for="currency">Currency</label>
+					<input type="text" class="form-control" placeholder="currency" aria-label="currency" id="currency" value="USD" name="currency" required />
+				</div>
+				<div class="form-group">
+					<label for="subtotalIva">SubtotalIva</label>
+					<input type="number" class="form-control" placeholder="subtotalIva" aria-label="subtotalIva" id="subtotalIva" value="0 name="subtotalIva" required />
+				</div>
+				<div class="form-group">
+					<label for="iva">Iva</label>
+					<input type="number" class="form-control" placeholder="iva" aria-label="iva" id="iva" value="0" name="iva" required />
+				</div>
+				<div class="form-group">
+					<label for="subtotalIva0">Subtotal Iva</label>
+					<input type="number" class="form-control" placeholder="subtotalIva0" aria-label="subtotalIva0" id="subtotalIva0" value="600" name="subtotalIva0" required />
+				</div>
+				<div class="form-group">
+					<label for="ice">Ice</label>
+					<input type="number" class="form-control" placeholder="ice" aria-label="ice" id="ice" value="0" name="ice" required />
+				</div>
+				<div class="col-md-3">
+					<button type="button" id="bAutorizationPayment" onclick="getAutorizationPayment()" class="btn btn-primary">Crear Subcripción</button>
+				</div>
+			</form>
+		</div>
 	</div>
 	<div id="createPayment" class="container d-none">		
 		<div class="row">
@@ -99,19 +199,59 @@
 		</div>				
 	</div>
 	<div id="getsubscription" class="container d-none">		
-		<div class="row">
-				<form id="fGetSubscription" class="row g-3" method="post">
-					<div class="col-md-3">
-					<input type="text" class="form-control" placeholder="Token" aria-label="Token" id="subscription" value="QZPnSP1000000b3MG3062555GhIrcYt5" required/>
-				  </div>
-				  <div class="col-md-3">
-					 <button type="button" id="bGetSubscription" onclick="GetSubscription()" class="btn btn-primary">Obtener Subcripción</button>
-				  </div>
-				</form>
+		<div class="row" id="DivsubscriptionId">
+			<form id="fGetSubscription" class="row g-3" method="post">
+				<div class="form-group" >
+					<label for="subscription">Subscription</label>
+					<input type="text" class="form-control" placeholder="subscription" aria-label="subscription" id="subscription" name="subscriptionId" required />
+				</div>
+				<div class="col-md-3">
+					<button type="button" id="bGetSubscription" onclick="GetSubscription()" class="btn btn-primary">Obtener Subcripción</button>
+				</div>
+			</form>
+		</div>				
+	</div>
+	<div id="voidTransaction" class="container d-none">		
+		<div class="row" >
+			<form id="fVoidTransaction" class="row g-3" method="post">
+				<div class="form-group" >
+					<label for="subscription">Ticket Number</label>
+					<input type="text" class="form-control" placeholder="ticketNumber" aria-label="ticketNumber" id="ticketNumber" name="ticketNumber" value="319228478889680318" required />
+				</div>
+				<div class="col-md-3">
+					<button type="button" id="bVoidTransaction" onclick="VoidTransaction()" class="btn btn-primary">Void Transaction</button>
+				</div>
+			</form>
 		</div>				
 	</div>
 
-
 	
 </div>
+@section Scripts
+{
+    <script>
+        function getUrlCreateSubcription() {
+			var url = '@Url.Action("crearSubcripcion", "Home")';
+            return url;
+        }
+		function getUrlCreateAutorization() {
+			var url = '@Url.Action("preAutorizarPago", "Home")';
+			return url;
+		}
+		function getUrlGetCreateAutorization() {
+			var url = '@Url.Action("GetAutorizacion", "Home")';
+			return url;
+		}
+		function getUrlGetSubscription(){
+			var url = '@Url.Action("GetSubscripcion", "Home")';
+			return url;
+		}
+
+		function getUrlVoidTransaction(){
+			var url = '@Url.Action("VoidTransaction", "Home")';
+			return url;
+		}
+	</script>
+    @*<script src="~/js/Formulario.js"></script>*@
+}
 
