@@ -32,12 +32,13 @@
     <div class="container">
         <div id="success" class="alert alert-success d-none"></div>
         <div id="error" class="alert alert-danger d-none"></div>
-        <div id="dvCargando" class="alert alert-warning" role="alert" style="visibility:hidden">
-          Realizando consulta ...
-        </div>
+        
         <main role="main" class="pb-3">
             @RenderBody()
         </main>  
+        <div id="dvCargando" class="loadingImage" style="visibility: hidden">
+            <img class="rotate" src="~/img/loading-gif.gif" style="width:100px; height:100px" />
+        </div>
     </div>
     <footer class="border-top footer text-muted">
         <div class="container">

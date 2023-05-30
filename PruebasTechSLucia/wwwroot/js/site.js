@@ -214,16 +214,14 @@ function GetSubscription() {
             contentType: false,
             processData: false,
             success: function (result) {
-                if (result.subscriptionId) {
+                var obj = JSON.parse(result);
+                if (obj.subscriptionId) {
                     console.log("OK");
-                    //localStorage.setItem('subscriptionId2', result.subscriptionId);
                     $("#error").addClass("d-none");
                     $("#success").removeClass("d-none");
                     $("#success").text("Consulta exitosa");
                     closeSpinner();
-                    alert(JSON.stringify(result));
-                    
-
+                    mostrarInfosubscription(obj);
                 } else {
                     mostrarMensaje(result);
                 }
@@ -233,8 +231,17 @@ function GetSubscription() {
                 closeSpinner();
                 mostrarMensaje(error);
             }
-        });  
+        }); 
+}
 
+function mostrarInfosubscription(obj) {    
+    $("#listaSubcripcion").append('<li>Name: '+obj.cardHolderName+'</li>');
+    $("#listaSubcripcion").append('<li>Card Type: '+obj.cardType+'</li>');
+    $("#listaSubcripcion").append('<li>Create: '+obj.created+'</li>');
+    $("#listaSubcripcion").append('<li>Payment Brand: '+obj.paymentBrand+'</li>');
+    $("#listaSubcripcion").append('<li>Periodicity: '+obj.periodicity+'</li>');
+    $("#listaSubcripcion").append('<li>Plan Name: '+obj.planName+'</li>');
+    $("#DvmostrarSubcripcion").removeClass("d-none");
 }
 
 function VoidTransaction() {
@@ -270,6 +277,58 @@ function VoidTransaction() {
 
 }
 
+function ListTransaction() {
+    loadSpinner();
+    var form = $('#flistTransaction')[0];
+    var formData = new FormData(form);
+
+    $.ajax({
+        type: "POST",
+        url: getUrlListTransaction(),
+        dataType: "json",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (result) {
+            var obj = JSON.parse(result);            
+            if (obj.total < 0) {
+                $("#error").addClass("d-none");
+                $("#success").removeClass("d-none");
+                $("#success").text("Consulta exitosa");
+                closeSpinner();
+                mostrarTablaListTrasaction(obj);
+            } else {
+                var objetoJSON = {
+                    code: "0000",
+                    message: "No se encontraron registros"
+                };
+                mostrarMensaje(objetoJSON);
+            }
+        },
+        error: function (error) {
+            console.log(error);
+            closeSpinner();
+            mostrarMensaje(error);
+        }
+    });
+
+}
+
+function mostrarTablaListTrasaction(obj) {
+    for (let i = 0; i < obj.total; i++) {
+        let clave = obj.data[i];
+        var htmlTags = '<tr>' +
+            '<td>' + clave.card_holder_name+'</td>' +
+            '<td>' + clave.document_type + '</td>' + 
+            '<td>' + clave.approved_transaction_amount + '</td>' + 
+            '<td>' + clave.channel + '</td>' +
+            '<td>' + clave.created + '</td>' +
+            '</tr>';
+        $('#tableListTransaction tbody').append(htmlTags);
+    }
+    $('#DvtableListTransaction').removeClass('d-none');
+}
+
 function habilitarSubcriptionToken() {
     limpiarMensajes();
     if ($("#subscriptionToken").hasClass("d-none")) {
@@ -279,6 +338,8 @@ function habilitarSubcriptionToken() {
         ocultarObtenerSubscripcion();
         ocultarVoidTransaccion();
         ocultarcrearPagos();
+        ocultarListTransaccion();
+        ocultarGetAutorizacionPagos();
     }
 }
 
@@ -301,8 +362,10 @@ function habilitarCrearToken() {
         ocultarsubscriptionToken();
         ocutarAutorizacionPagos();
         ocultarcrearPagos();
+        ocultarGetAutorizacionPagos();
         ocultarObtenerSubscripcion();
         ocultarVoidTransaccion();
+        ocultarListTransaccion();
     }
 
     if (localStorage.getItem('token') !== null) {
@@ -332,8 +395,10 @@ function habilitarAutorizacionPagos() {
         ocultarcreateToken();
         ocultarsubscriptionToken();
         ocultarcrearPagos();
-        ocultarObtenerSubscripcion();    
+        ocultarObtenerSubscripcion();  
+        ocultarGetAutorizacionPagos();
         ocultarVoidTransaccion();
+        ocultarListTransaccion();
     }
     if (localStorage.getItem('token') !== null) {
         $("#tokenAP").val(localStorage.getItem('token'));
@@ -352,6 +417,7 @@ function habilitarGetAutorizacionPagos() {
         ocultarcrearPagos();
         ocultarObtenerSubscripcion();
         ocultarVoidTransaccion();
+        ocultarListTransaccion();
     }
 }
 
@@ -398,8 +464,10 @@ function habilitarcrearPagos() {
         ocutarAutorizacionPagos();
         ocultarcreateToken();
         ocultarsubscriptionToken();
+        ocultarGetAutorizacionPagos();
         ocultarObtenerSubscripcion();
         ocultarVoidTransaccion();
+        ocultarListTransaccion();
     }
 }
 
@@ -424,6 +492,18 @@ function ocultarVoidTransaccion() {
     $("#transaction").removeClass("btn-primary");
 }
 
+function mostrarListTransaccion() {
+    $("#listTransaction").removeClass("d-none");
+    $("#transaction2").removeClass("btn-secondary");
+    $("#transaction2").addClass("btn-primary");
+    $("#DvtableListTransaction").addClass("d-none");
+}
+function ocultarListTransaccion() {
+    $("#listTransaction").addClass("d-none");
+    $("#transaction2").addClass("btn-secondary");
+    $("#transaction2").removeClass("btn-primary");    
+}
+
 function habilitarObtenerSubscripcion() {
     limpiarMensajes();
     if ($("#getsubscription").hasClass("d-none")) {        
@@ -434,6 +514,13 @@ function habilitarObtenerSubscripcion() {
         ocultarsubscriptionToken();
         ocultarGetAutorizacionPagos();
         ocultarVoidTransaccion();  
+        ocultarListTransaccion();
+
+        if (localStorage.getItem('subscriptionId') !== null) {
+            $("#subscription").val(localStorage.getItem('subscriptionId'));
+        } else {
+            $("#subscription").val("");
+        }
     }
 }
 
@@ -447,6 +534,21 @@ function habilitarvoidTransaccion() {
         ocultarsubscriptionToken();
         ocultarGetAutorizacionPagos();
         ocultarObtenerSubscripcion();
+        ocultarListTransaccion();
+    }
+}
+
+function habilitarListTransaccion() {
+    limpiarMensajes();
+    if ($("#listTransaction").hasClass("d-none")) {
+        mostrarListTransaccion();
+        ocultarVoidTransaccion();
+        ocultarcrearPagos();
+        ocutarAutorizacionPagos();
+        ocultarcreateToken();
+        ocultarsubscriptionToken();
+        ocultarGetAutorizacionPagos();
+        ocultarObtenerSubscripcion();
     }
 }
 
@@ -454,6 +556,7 @@ function mostrarObtenerSubscripcion() {
     $("#getsubscription").removeClass("d-none");
     $("#subcription3").removeClass("btn-secondary");
     $("#subcription3").addClass("btn-primary");
+    $("#DvmostrarSubcripcion").addClass("d-none");
 }
 function ocultarObtenerSubscripcion() {
     $("#getsubscription").addClass("d-none");

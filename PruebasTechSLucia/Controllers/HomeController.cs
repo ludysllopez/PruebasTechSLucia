@@ -5,7 +5,7 @@ using PruebasTechSLucia.Services;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
+
 
 namespace PruebasTechSLucia.Controllers
 {
@@ -14,12 +14,14 @@ namespace PruebasTechSLucia.Controllers
         private readonly ILogger<HomeController> _logger;
 		private readonly ISubcription _subcriptionServicio;
 		private readonly IAuthorization _authorizationServicio;
+		private readonly ITransaction _transactionServicio;
 
-		public HomeController(ILogger<HomeController> logger, ISubcription subs, IAuthorization aut)
+		public HomeController(ILogger<HomeController> logger, ISubcription subs, IAuthorization aut, ITransaction tr)
         {
             _logger = logger;
             _subcriptionServicio = subs;
             _authorizationServicio = aut;
+			_transactionServicio = tr;
 		}
 
         public async Task<IActionResult>Index()
@@ -84,18 +86,7 @@ namespace PruebasTechSLucia.Controllers
 			catch (Exception e)
 			{
 				throw;
-			}
-
-			JsonSerializerOptions? jsonSerializeOption = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-			HttpClient? httpClient = new HttpClient();
-			httpClient.BaseAddress = new Uri("https://api-uat.kushkipagos.com/card/v1/preAuthorization");
-			httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-			httpClient.DefaultRequestHeaders.Add("Private-Merchant-Id", "037fc0bfe30e411d8c382674c5e7762f");
-			HttpResponseMessage salida = await httpClient.PostAsJsonAsync("https://api-uat.kushkipagos.com/card/v1/preAuthorization", datos);
-			Task<string>? y = salida.Content.ReadAsStringAsync();
-			respuesta? x = JsonConvert.DeserializeObject<respuesta>(y.Result);
-
-			return Json(x);
+			}			
 		}
 
 		
@@ -114,7 +105,7 @@ namespace PruebasTechSLucia.Controllers
 			Task<string>? y = salida.Content.ReadAsStringAsync();
 			var x = JsonConvert.DeserializeObject<Object>(y.Result);
 
-			return Json(x);
+			return Json(x.ToString());
         }
 
 		[HttpPost]
@@ -135,7 +126,21 @@ namespace PruebasTechSLucia.Controllers
 			return Json(y.Result);
 		}
 
+		[HttpPost]
+		public async Task<ActionResult> ListTransaction(listTransactionModel lt)
+		{
+			try
+			{
+				var resultado = await _transactionServicio.ObtenerListadoTransacciones(lt);
+				return Json(resultado);
+			}
+			catch (Exception e)
+			{
+				throw;
+			}
+		}
 
+		
 
 		[HttpPost]
 		public ActionResult ConfirmPayment()

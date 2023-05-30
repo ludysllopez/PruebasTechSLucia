@@ -10,7 +10,7 @@
 	<button id="Autorizacion2" type="button" class="btn btn-secondary" onclick="habilitarGetAutorizacionPagos()">Get Authorize payments</button>
 	<button id="subcription3" type="button" class="btn btn-secondary" onclick="habilitarObtenerSubscripcion()">Get subscription</button>
 	<button id="transaction" type="button" class="btn btn-secondary" onclick="habilitarvoidTransaccion()">Void Transaction</button>
-
+	<button id="transaction2" type="button" class="btn btn-secondary" onclick="habilitarListTransaccion()">List Transaction</button>
 	@*<button id="Payment1" type="button" class="btn btn-secondary" onclick="habilitarcrearPagos()">Create payment</button>*@
 </div>
 <div>
@@ -46,40 +46,49 @@
 	</div>
 	<div id="createToken" class="container d-none">		
 		<div class="row">
-				<form class="row g-3" id="fcreateToken">
-				  <div class="col-md-3">
+			<form class="row g-3" id="fcreateToken">
+				<div class="form-group">
+					<label for="Token">Token</label>
 					<input type="text" class="form-control" placeholder="Token" aria-label="Token" id="Token" name="token" value="gV3ox6100000sAxClU033646vnnJsT83" required />
-				  </div>
-				  <div class="col-md-3">
+				 </div>
+				<div class="form-group">
+					<label for="planName">Plan Name</label>
 					<input type="text" class="form-control" placeholder="Plan Name" aria-label="planName" id="planName" name="planName" value="Premium" required />
 				  </div>
-				  <div class="col-md-3">
+				<div class="form-group">
+					<label for="periodicity">Periodicity</label>
 					<input type="text" class="form-control" placeholder="Periodicity" aria-label="periodicity" id="periodicity" name="periodicity" value="monthly" required />
 				  </div>
-				  <div class="col-md-3">
+				<div class="form-group">
+					<label for="documentType">Document Type</label>
 					<select class="form-control" id="documentType" name="documentType">
 					  <option value="CC" selected>CC</option>
 					</select>
 				</div>
-					<div class="col-md-3">
+				<div class="form-group">
+					<label for="documentNumber">Document Number</label>
 					<input type="number" class="form-control" placeholder="Document Number" aria-label="documentNumber" id="documentNumber" name="documentNumber" value="1009283738" required />
 				  </div> 
-				  <div class="col-md-3">
+				  <div class="form-group">
+					<label for="email">Email</label>
 					<input type="email" class="form-control" placeholder="Email" aria-label="email" id="email" name="email" value="test@test.com" required />
-				  </div> 
-				  <div class="col-md-3">
-					<input type="text" class="form-control" placeholder="first Name" aria-label="firstName" id="firstName" name="firstName" value="Diego" required />
-				  </div> 
-				  <div class="col-md-3">
-					<input type="text" class="form-control" placeholder="last Name" aria-label="lastName" id="lastName" name="lastName" value="Cadena" required />
-				  </div> 
-				  <div class="col-md-3">
-					<input type="tel" class="form-control" placeholder="phoneNumber" aria-label="phone Number" id="phoneNumber" name="phoneNumber" value="3988734644" required>>
-				  </div> 			   
-				  <div class="col-md-3">
-					 <button type="button" onclick="createSubscription()" class="btn btn-primary">Crear Subcripción</button>
 				  </div>
-				</form>
+				<div class="form-group">
+					<label for="firstName">First Name</label>
+					<input type="text" class="form-control" placeholder="first Name" aria-label="firstName" id="firstName" name="firstName" value="Diego" required />
+				  </div>
+				<div class="form-group">
+					<label for="lastName">Last Name</label>
+					<input type="text" class="form-control" placeholder="last Name" aria-label="lastName" id="lastName" name="lastName" value="Cadena" required />
+				  </div>
+				<div class="form-group">
+					<label for="phoneNumber">Phone Number</label>
+					<input type="tel" class="form-control" placeholder="phoneNumber" aria-label="phone Number" id="phoneNumber" name="phoneNumber" value="3988734644" required>>
+				  </div>
+				<div class="form-group">
+					 <button type="button" onclick="createSubscription()" class="btn btn-primary">Crear Subcripción</button>
+				</div>
+			</form>
 		</div>				
 	</div>
 	<div id="AutorizationPayment" class="container d-none">		
@@ -207,8 +216,16 @@
 				</div>
 				<div class="col-md-3">
 					<button type="button" id="bGetSubscription" onclick="GetSubscription()" class="btn btn-primary">Obtener Subcripción</button>
+					<br />
 				</div>
 			</form>
+			<br />
+			<div id="DvmostrarSubcripcion" class="d-none">
+				<h2>Subscription</h2>
+				<div>
+					<ul id="listaSubcripcion"></ul>
+				</div>
+			</div>
 		</div>				
 	</div>
 	<div id="voidTransaction" class="container d-none">		
@@ -224,7 +241,56 @@
 			</form>
 		</div>				
 	</div>
-
+	<div id="listTransaction" class="container d-none">
+		<div class="row">
+			<form id="flistTransaction" class="row g-3" method="post">
+				<div class="form-group">
+					<label for="from">From</label>
+					<input type="datetime-local" class="form-control" aria-label="from" id="from" name="from" required />
+				</div>
+				<div class="form-group">
+					<label for="from">To</label>
+					<input type="datetime-local" class="form-control" aria-label="to" id="to" name="to" required />
+				</div>
+				<div class="col-md-3">
+					<button type="button" id="bListTransaction" onclick="ListTransaction()" class="btn btn-primary">List Transaction</button>
+				</div>
+			</form>
+			<br />
+			<div id="DvtableListTransaction" class="d-none">
+				<h2>List Transactions</h2>
+				<table class="table table-responsive" id="tableListTransaction">
+					<thead>
+						<tr>
+							<th>User</th>
+							<th>Description</th>
+							<th>Amount</th>
+							<th>card_type</th>
+							<th>Channel</th>
+							<th>Created</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>John</td>
+							<td>Doe</td>
+							<td>john@example.com</td>
+						</tr>
+						<tr>
+							<td>Smith</td>
+							<td>Thomas</td>
+							<td>smith@example.com</td>
+						</tr>
+						<tr>
+							<td>Merry</td>
+							<td>Jim</td>
+							<td>merry@example.com</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 	
 </div>
 @section Scripts
@@ -249,6 +315,11 @@
 
 		function getUrlVoidTransaction(){
 			var url = '@Url.Action("VoidTransaction", "Home")';
+			return url;
+		}
+
+		function getUrlListTransaction() {
+			var url = '@Url.Action("ListTransaction", "Home")';
 			return url;
 		}
 	</script>

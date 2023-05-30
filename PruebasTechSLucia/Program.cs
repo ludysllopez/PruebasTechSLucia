@@ -18,6 +18,7 @@ public class Program
 
 					services.AddSingleton<ISubcription, Subcription>();
 					services.AddSingleton<IAuthorization, Authorization>();
+					services.AddSingleton<ITransaction, Transaction>();
 					services.AddControllersWithViews();
 					services.AddSession();
 				})
